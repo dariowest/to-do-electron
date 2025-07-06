@@ -16,6 +16,7 @@
   "dependencies": {
     "better-sqlite3": "^12.2.0",
     "boolean": "^3.2.0",
+    "bootstrap": "^5.3.7",
     "buffer-crc32": "^0.2.13",
     "cacheable-lookup": "^5.0.4",
     "cacheable-request": "^7.0.4",

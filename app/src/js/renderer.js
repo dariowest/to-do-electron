@@ -1,2 +1,2 @@
 const nuevaId = window.api.añadirAsignatura("Sistemas Operativos");
-console.log(obtenerAsignaturas())
+console.log(nuevaId)
