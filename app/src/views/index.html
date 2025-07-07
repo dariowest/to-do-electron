@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'" />
+  <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'" />
+  <link href="../css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <title>To-do-app</title>
+</head>
+
+<body>
+  <header class="p-4 bg-primary text-white">
+    <h1>To-Do-App</h1>
+  </header>
+  <!-- Nav tabs -->
+  <ul class="nav nav-tabs">
+    <li class="nav-item">
+      <a class="nav-link active" data-bs-toggle="tab" href="#home">Tasks</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" data-bs-toggle="tab" href="#menu1">Asignaturas</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" data-bs-toggle="tab" href="#menu2">Calendario</a>
+    </li>
+  </ul>
+
+  <!-- Tab panes -->
+  <div class="tab-content">
+    <div class="tab-pane container active" id="home">...</div>
+    <div class="tab-pane container fade" id="menu1">
+      <form>
+        <div class="form-row m-2">
+          <div>
+            <input type="text" id="texto" class="form-control">
+          </div>
+          <div>
+            <input type="button" value="Añadir" id="aniadir" class="btn btn-primary">
+          </div>
+        </div>
+      </form>
+      <section class="p-5" id="info">
+      </section>
+
+    </div>
+    <div class="tab-pane container fade" id="menu2">...</div>
+  </div>
+  <script src="../js/bootstrap.bundle.min.js"></script>
+  <script src="../js/renderer.js"></script>
+</body>
+
+</html>

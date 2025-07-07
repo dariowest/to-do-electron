@@ -11,7 +11,7 @@ db.exec(`
     nombre TEXT NOT NULL
   );
 
-  CREATE TABLE IF NOT EXISTS examenes (
+  CREATE TABLE IF NOT EXISTS teoria (
     id INTEGER PRIMARY KEY,
     nombre TEXT NOT NULL,
     asignatura_id INTEGER NOT NULL,
@@ -31,9 +31,9 @@ db.exec(`
     estado TEXT NOT NULL,
     fecha TEXT NOT NULL,
     importancia TEXT NOT NULL,
-    examen_id INTEGER,
+    teoria_id INTEGER,
     practica_id INTEGER,
-    FOREIGN KEY (examen_id) REFERENCES examenes(id),
+    FOREIGN KEY (teoria_id) REFERENCES teoria(id),
     FOREIGN KEY (practica_id) REFERENCES practicas(id)
   );
 `);
@@ -41,7 +41,7 @@ db.exec(`
 // Exponer API al renderer
 contextBridge.exposeInMainWorld('api', {
   // Obtener todas las asignaturas
-  obtenerAsignaturas: () => db.prepare('SELECT * FROM asignaturas').all(),
+  obtenerAsignaturas: () => db.prepare('SELECT * FROM asignaturas ORDER BY nombre').all(),
 
   // Añadir asignatura
   añadirAsignatura: (nombre) => {
@@ -49,9 +49,9 @@ contextBridge.exposeInMainWorld('api', {
     return stmt.run(nombre).lastInsertRowid;
   },
 
-  // Obtener examenes de una asignatura
-  obtenerExamenes: (asignaturaId) => {
-    const stmt = db.prepare('SELECT * FROM examenes WHERE asignatura_id = ?');
+  // Obtener teoria de una asignatura
+  obtenerTeoria: (asignaturaId) => {
+    const stmt = db.prepare('SELECT * FROM teoria WHERE asignatura_id = ?');
     return stmt.all(asignaturaId);
   },
 
@@ -71,6 +71,10 @@ contextBridge.exposeInMainWorld('api', {
   obtenerTareasDePractica: (practicaId) => {
     const stmt = db.prepare('SELECT * FROM tareas WHERE practica_id = ?');
     return stmt.all(practicaId);
+  },
+  obtenerTareas: () => {
+    const stmt = db.prepare('SELECT * FROM tareas');
+    return stmt.all();
   },
 
   // Añadir tarea a examen
