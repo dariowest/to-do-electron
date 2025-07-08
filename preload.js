@@ -11,14 +11,7 @@ db.exec(`
     nombre TEXT NOT NULL
   );
 
-  CREATE TABLE IF NOT EXISTS teoria (
-    id INTEGER PRIMARY KEY,
-    nombre TEXT NOT NULL,
-    asignatura_id INTEGER NOT NULL,
-    FOREIGN KEY (asignatura_id) REFERENCES asignaturas(id)
-  );
-
-  CREATE TABLE IF NOT EXISTS practicas (
+  CREATE TABLE IF NOT EXISTS secciones (
     id INTEGER PRIMARY KEY,
     nombre TEXT NOT NULL,
     asignatura_id INTEGER NOT NULL,
@@ -31,14 +24,12 @@ db.exec(`
     estado TEXT NOT NULL,
     fecha TEXT NOT NULL,
     importancia TEXT NOT NULL,
-    teoria_id INTEGER,
-    practica_id INTEGER,
-    FOREIGN KEY (teoria_id) REFERENCES teoria(id),
-    FOREIGN KEY (practica_id) REFERENCES practicas(id)
+    seccion_id INTEGER NOT NULL,
+    FOREIGN KEY (seccion_id) REFERENCES secciones(id)
   );
 `);
 
-// Exponer API al renderer
+
 contextBridge.exposeInMainWorld('api', {
   // Obtener todas las asignaturas
   obtenerAsignaturas: () => db.prepare('SELECT * FROM asignaturas ORDER BY nombre').all(),
@@ -49,49 +40,36 @@ contextBridge.exposeInMainWorld('api', {
     return stmt.run(nombre).lastInsertRowid;
   },
 
-  // Obtener teoria de una asignatura
-  obtenerTeoria: (asignaturaId) => {
-    const stmt = db.prepare('SELECT * FROM teoria WHERE asignatura_id = ?');
+  // Obtener secciones de una asignatura
+  obtenerSecciones: (asignaturaId) => {
+    const stmt = db.prepare('SELECT * FROM secciones WHERE asignatura_id = ? ORDER BY nombre');
     return stmt.all(asignaturaId);
   },
 
-  // Obtener prácticas de una asignatura
-  obtenerPracticas: (asignaturaId) => {
-    const stmt = db.prepare('SELECT * FROM practicas WHERE asignatura_id = ?');
-    return stmt.all(asignaturaId);
+  // Añadir sección a una asignatura
+  añadirSeccion: (nombre, asignaturaId) => {
+    const stmt = db.prepare('INSERT INTO secciones (nombre, asignatura_id) VALUES (?, ?)');
+    return stmt.run(nombre, asignaturaId).lastInsertRowid;
   },
 
-  // Obtener tareas de un examen
-  obtenerTareasDeExamen: (examenId) => {
-    const stmt = db.prepare('SELECT * FROM tareas WHERE examen_id = ?');
-    return stmt.all(examenId);
+  // Obtener tareas de una sección
+  obtenerTareasDeSeccion: (seccionId) => {
+    const stmt = db.prepare('SELECT * FROM tareas WHERE seccion_id = ? ORDER BY fecha');
+    return stmt.all(seccionId);
   },
 
-  // Obtener tareas de una práctica
-  obtenerTareasDePractica: (practicaId) => {
-    const stmt = db.prepare('SELECT * FROM tareas WHERE practica_id = ?');
-    return stmt.all(practicaId);
+  // Añadir tarea a una sección
+  añadirTarea: (nombre, estado, fecha, importancia, seccionId) => {
+    const stmt = db.prepare(`
+      INSERT INTO tareas (nombre, estado, fecha, importancia, seccion_id)
+      VALUES (?, ?, ?, ?, ?)
+    `);
+    return stmt.run(nombre, estado, fecha, importancia, seccionId).lastInsertRowid;
   },
+
+  // Obtener todas las tareas (opcional)
   obtenerTareas: () => {
-    const stmt = db.prepare('SELECT * FROM tareas');
+    const stmt = db.prepare('SELECT * FROM tareas ORDER BY fecha');
     return stmt.all();
-  },
-
-  // Añadir tarea a examen
-  añadirTareaExamen: (nombre, estado, fecha, importancia, examenId) => {
-    const stmt = db.prepare(`
-      INSERT INTO tareas (nombre, estado, fecha, importancia, examen_id)
-      VALUES (?, ?, ?, ?, ?)
-    `);
-    return stmt.run(nombre, estado, fecha, importancia, examenId).lastInsertRowid;
-  },
-
-  // Añadir tarea a práctica
-  añadirTareaPractica: (nombre, estado, fecha, importancia, practicaId) => {
-    const stmt = db.prepare(`
-      INSERT INTO tareas (nombre, estado, fecha, importancia, practica_id)
-      VALUES (?, ?, ?, ?, ?)
-    `);
-    return stmt.run(nombre, estado, fecha, importancia, practicaId).lastInsertRowid;
   }
 });
