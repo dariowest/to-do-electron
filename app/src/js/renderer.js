@@ -1,16 +1,19 @@
-document.getElementById("aniadir").addEventListener("click", aniadirAsignatura);
+document.getElementById("form-aniadir").addEventListener("submit", aniadirAsignatura);
+
 muestraAsignaturas()
 
-function aniadirAsignatura(){
+function aniadirAsignatura(e){
+    e.preventDefault();
     let valor = document.getElementById("texto").value
     console.log(valor)
     let id = window.api.añadirAsignatura(valor)
     console.log(id)
+    document.getElementById("texto").value=''
     muestraAsignaturas()
 }
 function muestraAsignaturas() {
   let info = document.getElementById("info");
-  info.innerHTML = ""; // Limpia contenido previo si quieres
+  info.innerHTML = "";
 
   let asignaturas = window.api.obtenerAsignaturas();
 
